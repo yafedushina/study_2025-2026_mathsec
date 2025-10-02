@@ -1,0 +1,52 @@
+<h1 id="информация">Информация</h1>
+<h2 id="докладчик">Докладчик</h2>
+<div class="columns" data-align="center">
+<div class="column" style="width:70%;">
+<ul>
+<li>Федюшина Ярослава Андреевна</li>
+<li>Студентка</li>
+<li>Обучающийся на кафедре теории вероятностей и кибербезопасности</li>
+<li>Российский университет дружбы народов</li>
+</ul>
+</div>
+</div>
+<h1 id="вводная-часть">Вводная часть</h1>
+<h2 id="цели-и-задачи">Цели и задачи</h2>
+<ul>
+<li>Приобрести навыки шифрования граммированием на языке Julia</li>
+</ul>
+<h1 id="основная-часть">Основная часть</h1>
+<h2 id="задание">Задание</h2>
+<p>Реализовать алгоритм шифрования гаммированием конечной гаммой.</p>
+<h2 id="написание-кода">Написание кода</h2>
+<p>const RUS_ALPHABET =
+[‘а’,‘б’,‘в’,‘г’,‘д’,‘е’,‘ж’,‘з’,‘и’,‘й’,‘к’,‘л’,‘м’,
+‘н’,‘о’,‘п’,‘р’,‘с’,‘т’,‘у’,‘ф’,‘х’,‘ц’,‘ч’,‘ш’,‘щ’,
+‘ъ’,‘ы’,‘ь’,‘э’,‘ю’,‘я’]</p>
+<p>function char_to_index(c::Char) idx = findfirst(==(c), RUS_ALPHABET)
+return idx === nothing ? nothing : idx - 1 end</p>
+<p>function index_to_char(i::Int) return RUS_ALPHABET[i+1] end</p>
+<p>Шифрование по гамме function gamma_cipher_mod33(text::String,
+gamma::String) text_chars = collect(lowercase(text))<br />
+gamma_chars = collect(lowercase(gamma))<br />
+n = length(text_chars) k = length(gamma_chars) result = IOBuffer()</p>
+<pre><code>for i in 1:n
+    t_idx = char_to_index(text_chars[i])
+    g_idx = char_to_index(gamma_chars[(i - 1) % k + 1])
+    if t_idx === nothing
+        print(result, text_chars[i]) 
+    else
+        enc_idx = (t_idx + g_idx) % 33
+        print(result, index_to_char(enc_idx))
+    end
+end
+
+return String(take!(result))</code></pre>
+<p>end</p>
+<p>println(“Введите текст для шифрования:”) plaintext = readline()</p>
+<p>println(“Введите гамму:”) gamma = readline()</p>
+<p>cipher_text = gamma_cipher_mod33(plaintext, gamma)
+println(“Зашифрованный текст:”, cipher_text)</p>
+<h2 id="выводы">Выводы</h2>
+<p>В ходе выполнения данной лабораторной работы мы научились шифрованию
+граммировавнием на языке Julia.</p>
