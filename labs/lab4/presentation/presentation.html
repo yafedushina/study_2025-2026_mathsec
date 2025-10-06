@@ -1,0 +1,34 @@
+<p>::::::::::::::</p>
+<h2 id="цель-лабораторной-работы">Цель лабораторной работы</h2>
+<p>Целью данной лабораторной работы является реализация разных вариантов
+алгоритма Евклида</p>
+<h2 id="выполнение-лабораторной-работы">Выполнение лабораторной
+работы</h2>
+<h1 id="алгоритм-евклида">Алгоритм Евклида</h1>
+<p>a, b = 10, 20 print(a,b)</p>
+<p>def euclid(a: int, b: int) -&gt; int: while a != 0 and b != 0: if a
+&gt;= b: a %= b else: b %= a return a or b</p>
+<p>euclid(a, b)</p>
+<h1 id="бинарный-алгоритм-евклида">Бинарный алгоритм Евклида</h1>
+<p>ef euclid_bin(a: int, b: int) -&gt; int: g = 1 while a % 2 == 0 and b
+% 2 == 0: a /= 2 b /= 2 g <em>= 2 u, v = a, b while u != 0: if u % 2 ==
+0: u /= 2 if v%2 == 0: v /= 2 if u&gt;=v: u -= v else: v -= u return
+g</em>v</p>
+<p>euclid_bin(a, b)</p>
+<h1 id="расширенный-алгоритм-евклида">Расширенный алгоритм Евклида</h1>
+<p>def euclid_ext(a: int, b: int) -&gt; tuple[int]: if a == 0: return
+(b, 0, 1) else: div, x, y = euclid_ext(b % a, a) return (div, y - ( b //
+a ) * x, x)</p>
+<p>euclid_ext(a, b)</p>
+<p>#Расширенный бинарный алгоритм Евклида</p>
+<p>def euclid_bin_ext(a: int, b: int) -&gt; tuple[int]: g = 1 while a %
+2 == 0 and b % 2 == 0: a /= 2 b /= 2 g <em>= 2 u, v = a, b A, B, C, D =
+1, 0, 0, 1 while u != 0: if u % 2 == 0: u /= 2 if A % 2 == 0 and B % 2
+== 0: A /= 2 B /= 2 else: A = (A + b)/2 B = (B - a)/2 if v % 2 == 0: v
+/= 2 if C % 2 == 0 and D % 2 == 0: C /= 2 D /= 2 else: C = (C + b)/2 D =
+(D - a)/2 if u&gt;=v: u -= v A -= C B -= D else: v -= u C -= A D -= B
+return (g </em> v, C, D)</p>
+<p>euclid_bin_ext(a, b)</p>
+<h2 id="вывод">Вывод</h2>
+<p>В ходе выполнения данной лабораторной работы мы реализовали разные
+виды алгоритма Евклида</p>
