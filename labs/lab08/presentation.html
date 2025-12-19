@@ -1,0 +1,325 @@
+<h2 id="докладчик">Докладчик</h2>
+<div class="columns" data-align="center">
+<div class="column" style="width:70%;">
+<ul>
+<li>Федюшина Ярослава Андреевна</li>
+<li>Студентка группы НФИмд-02-25</li>
+<li>Студ. билет 1032259399</li>
+<li>Российский университет дружбы народов имени Патриса Лумумбы</li>
+</ul>
+</div><div class="column" style="width:30%;">
+
+</div>
+</div>
+<h1 id="цель-работы">Цель работы</h1>
+<p>Получить навыки написания программного кода для реализации алгоритмов
+для выполнения арифметических операций</p>
+<h1 id="задание">Задание</h1>
+<p>Реализовать программмно 5 алгоритмов для выполнения арифметических
+операций с большими целыми числами</p>
+<h1 id="выполнение-лабораторной-работы">Выполнение лабораторной
+работы</h1>
+<h2 id="python">Python</h2>
+<p>def to_digits(num_str, b=10): return [int(d) for d in
+reversed(num_str)]</p>
+<p>def from_digits(digits, b=10): return ’’.join(str(d) for d in
+reversed(digits))</p>
+<p>def normalize(num_digits): while len(num_digits) &gt; 1 and
+num_digits[-1] == 0: num_digits.pop() return num_digits</p>
+<p>def bigint_add(u_str, v_str, b=10):</p>
+<pre><code>u = to_digits(u_str, b)
+v = to_digits(v_str, b)
+
+# Делаем списки одинаковой длины
+n = max(len(u), len(v))
+u = u + [0] * (n - len(u))
+v = v + [0] * (n - len(v))
+
+w = [0] * (n + 1) 
+k = 0  
+
+for j in range(n):
+    total = u[j] + v[j] + k
+    w[j] = total % b
+    k = total // b
+
+w[n] = k  
+
+result_digits = normalize(w)
+return from_digits(result_digits, b)</code></pre>
+<p>def bigint_subtract(u_str, v_str, b=10):</p>
+<pre><code>u = to_digits(u_str, b)
+v = to_digits(v_str, b)
+
+# Делаем списки одинаковой длины
+n = max(len(u), len(v))
+u = u + [0] * (n - len(u))
+v = v + [0] * (n - len(v))
+
+w = [0] * n
+k = 0  # Заем
+
+for j in range(n):
+    diff = u[j] - v[j] + k
+    if diff &lt; 0:
+        diff += b
+        k = -1
+    else:
+        k = 0
+    w[j] = diff
+
+result_digits = normalize(w)
+return from_digits(result_digits, b)</code></pre>
+<p>def bigint_multiply_column(u_str, v_str, b=10):</p>
+<pre><code>u = to_digits(u_str, b)
+v = to_digits(v_str, b)
+
+n = len(u)
+m = len(v)
+w = [0] * (m + n)  
+
+for j in range(m):
+    if v[j] == 0:
+        w[j] = 0
+        continue
+        
+    k = 0
+    for i in range(n):
+        t = u[i] * v[j] + w[i + j] + k
+        w[i + j] = t % b
+        k = t // b
+    
+    w[n + j] = k
+
+result_digits = normalize(w)
+return from_digits(result_digits, b)</code></pre>
+<p>def bigint_multiply_fast(u_str, v_str, b=10):</p>
+<pre><code>u = to_digits(u_str, b)
+v = to_digits(v_str, b)
+
+n = len(u)
+m = len(v)
+w = [0] * (m + n)
+t = 0
+
+for s in range(m + n):
+    
+    sum_diag = 0
+    for i in range(max(0, s - m + 1), min(n, s + 1)):
+        j = s - i
+        if 0 &lt;= j &lt; m:
+            sum_diag += u[i] * v[j]
+    
+    sum_diag += t
+    w[s] = sum_diag % b
+    t = sum_diag // b
+
+result_digits = normalize(w)
+return from_digits(result_digits, b)</code></pre>
+<p>def bigint_divide(u_str, v_str, b=10):</p>
+<pre><code>u = [int(d) for d in u_str]
+v = [int(d) for d in v_str]
+
+n = len(u) - 1  # Индекс старшего разряда u
+t = len(v) - 1  # Индекс старшего разряда v
+
+# Проверка условий
+if n &lt; t:
+    return &quot;0&quot;, u_str
+
+# Шаг 1: Инициализация частного
+q = [0] * (n - t + 1)
+
+# Шаг 2: Корректировка
+# Создаем v * b^(n-t)
+v_padded = v + [0] * (n - t)
+
+# Пока u &gt;= v_padded
+while True:
+    # Функция сравнения двух чисел в списках
+    def compare_lists(a, b):
+        # Удаляем ведущие нули
+        a_norm = normalize(a.copy())
+        b_norm = normalize(b.copy())
+        
+        if len(a_norm) &gt; len(b_norm):
+            return 1
+        elif len(a_norm) &lt; len(b_norm):
+            return -1
+        else:
+            for i in range(len(a_norm)-1, -1, -1):
+                if a_norm[i] &gt; b_norm[i]:
+                    return 1
+                elif a_norm[i] &lt; b_norm[i]:
+                    return -1
+            return 0
+    
+    if compare_lists(u, v_padded) &gt;= 0:
+        q[n - t] += 1
+        u = to_digits(from_digits(to_digits(&#39;&#39;.join(map(str, u))), b), b)
+        v_padded_digits = to_digits(from_digits(&#39;&#39;.join(map(str, v_padded)), b), b)
+        u_digits = to_digits(from_digits(&#39;&#39;.join(map(str, u)), b), b)
+        
+        # Делаем одинаковой длины
+        max_len = max(len(u_digits), len(v_padded_digits))
+        u_digits = u_digits + [0] * (max_len - len(u_digits))
+        v_padded_digits = v_padded_digits + [0] * (max_len - len(v_padded_digits))
+        
+        # Вычитаем
+        borrow = 0
+        result = []
+        for i in range(max_len):
+            diff = u_digits[i] - v_padded_digits[i] + borrow
+            if diff &lt; 0:
+                diff += b
+                borrow = -1
+            else:
+                borrow = 0
+            result.append(diff)
+        
+        u = [int(d) for d in reversed(from_digits(normalize(result), b))]
+    else:
+        break
+
+# Шаг 3: Основной цикл
+for i in range(n, t, -1):
+    if i - t - 1 &gt;= 0 and i - t - 1 &lt; len(q):
+        # Шаг 3.1
+        if u[0] &gt;= v[0]:
+            q[i - t - 1] = b - 1
+        else:
+            q[i - t - 1] = (u[0] * b + (u[1] if len(u) &gt; 1 else 0)) // v[0]
+        
+        # Шаг 3.2
+        while q[i - t - 1] * (v[0] * b + (v[1] if len(v) &gt; 1 else 0)) &gt; \
+              u[0] * b * b + (u[1] if len(u) &gt; 1 else 0) * b + (u[2] if len(u) &gt; 2 else 0):
+            q[i - t - 1] -= 1
+
+# Шаг 4: Остаток
+r = &#39;&#39;.join(map(str, u))
+
+# Формируем частное
+quotient = &#39;&#39;.join(map(str, q))
+quotient = quotient.lstrip(&#39;0&#39;) or &#39;0&#39;
+
+return quotient, r</code></pre>
+<p>def test_algorithms(): print(“Тестирование алгоритмов для системы
+счисления с основанием 10”) print(“=” * 60)</p>
+<pre><code># Тестовые данные
+test_cases = [
+    (&quot;123&quot;, &quot;456&quot;),
+    (&quot;999&quot;, &quot;1&quot;),
+    (&quot;1000&quot;, &quot;999&quot;),
+    (&quot;54321&quot;, &quot;12345&quot;),
+    (&quot;999999&quot;, &quot;888888&quot;),
+]
+
+for u_str, v_str in test_cases:
+    print(f&quot;\nu = {u_str}, v = {v_str}&quot;)
+    print(&quot;-&quot; * 40)
+    
+    # Сложение
+    sum_result = bigint_add(u_str, v_str)
+    print(f&quot;Сложение: {u_str} + {v_str} = {sum_result}&quot;)
+    print(f&quot;Проверка: {int(u_str) + int(v_str)}&quot;)
+    
+    # Вычитание (только если u &gt;= v)
+    if int(u_str) &gt;= int(v_str):
+        sub_result = bigint_subtract(u_str, v_str)
+        print(f&quot;Вычитание: {u_str} - {v_str} = {sub_result}&quot;)
+        print(f&quot;Проверка: {int(u_str) - int(v_str)}&quot;)
+    
+    # Умножение столбиком
+    mul_col_result = bigint_multiply_column(u_str, v_str)
+    print(f&quot;Умножение столбиком: {u_str} * {v_str} = {mul_col_result}&quot;)
+    print(f&quot;Проверка: {int(u_str) * int(v_str)}&quot;)
+    
+    # Быстрое умножение
+    mul_fast_result = bigint_multiply_fast(u_str, v_str)
+    print(f&quot;Быстрое умножение: {u_str} * {v_str} = {mul_fast_result}&quot;)
+    print(f&quot;Проверка: {int(u_str) * int(v_str)}&quot;)
+    
+    # Деление (только если v != 0)
+    if int(v_str) != 0:
+        div_result, mod_result = bigint_divide(u_str, v_str)
+        print(f&quot;Деление: {u_str} / {v_str} = {div_result}&quot;)
+        print(f&quot;Остаток: {mod_result}&quot;)
+        print(f&quot;Проверка частного: {int(u_str) // int(v_str)}&quot;)
+        print(f&quot;Проверка остатка: {int(u_str) % int(v_str)}&quot;)</code></pre>
+<p>def demo(): “““Демонстрация работы алгоритмов”“” print(“Демонстрация
+работы алгоритмов”) print(“=” * 60)</p>
+<pre><code># Пример 1
+u = &quot;123456789&quot;
+v = &quot;987654321&quot;
+b = 10
+
+print(f&quot;Пример 1 (b={b}):&quot;)
+print(f&quot;u = {u}&quot;)
+print(f&quot;v = {v}&quot;)
+
+# Сложение
+result_add = bigint_add(u, v, b)
+print(f&quot;\n1. Сложение: {u} + {v} = {result_add}&quot;)
+
+# Вычитание
+result_sub = bigint_subtract(v, u, b)  # v &gt; u
+print(f&quot;2. Вычитание: {v} - {u} = {result_sub}&quot;)
+
+# Умножение столбиком
+result_mul_col = bigint_multiply_column(u, v, b)
+print(f&quot;3. Умножение столбиком: {u} * {v} = {result_mul_col}&quot;)
+
+# Быстрое умножение
+result_mul_fast = bigint_multiply_fast(u, v, b)
+print(f&quot;4. Быстрое умножение: {u} * {v} = {result_mul_fast}&quot;)
+
+# Деление
+quotient, remainder = bigint_divide(v, u, b)
+print(f&quot;5. Деление: {v} / {u} = {quotient}&quot;)
+print(f&quot;   Остаток: {remainder}&quot;)
+
+# Пример 2: Двоичная система (b=2)
+print(f&quot;\n{&#39;=&#39;*60}&quot;)
+print(&quot;Пример 2 (b=2):&quot;)
+u_bin = &quot;1101&quot;  # 13 в десятичной
+v_bin = &quot;101&quot;   # 5 в десятичной
+b_bin = 2
+
+print(f&quot;u = {u_bin} (десятичное: {int(u_bin, 2)})&quot;)
+print(f&quot;v = {v_bin} (десятичное: {int(v_bin, 2)})&quot;)
+
+result_add_bin = bigint_add(u_bin, v_bin, b_bin)
+print(f&quot;\n1. Сложение: {u_bin} + {v_bin} = {result_add_bin} (десятичное: {int(result_add_bin, 2)})&quot;)
+
+result_mul_bin = bigint_multiply_column(u_bin, v_bin, b_bin)
+print(f&quot;2. Умножение: {u_bin} * {v_bin} = {result_mul_bin} (десятичное: {int(result_mul_bin, 2)})&quot;)</code></pre>
+<p>if <strong>name</strong> == “<strong>main</strong>”: # Запуск
+демонстрации demo()</p>
+<pre><code>print(&quot;Запуск тестирования всех алгоритмов:&quot;)
+test_algorithms()</code></pre>
+<h3 id="результаты-работы-кода">Результаты работы кода</h3>
+<h1 id="демонстрация-работы-алгоритмов">Демонстрация работы
+алгоритмов</h1>
+<p>Пример 1 (b=10): u = 123456789 v = 987654321</p>
+<ol type="1">
+<li>Сложение: 123456789 + 987654321 = 1111111110</li>
+<li>Вычитание: 987654321 - 123456789 = 864197532</li>
+<li>Умножение столбиком: 123456789 * 987654321 = 121932631112635269</li>
+<li>Быстрое умножение: 123456789 * 987654321 = 121932631112635269</li>
+<li>Деление: 987654321 / 123456789 = 0 Остаток: 987654321</li>
+</ol>
+<p>============================================================ Пример 2
+(b=2): u = 1101 (десятичное: 13) v = 101 (десятичное: 5)</p>
+<ol type="1">
+<li>Сложение: 1101 + 101 = 10010 (десятичное: 18)</li>
+<li>Умножение: 1101 * 101 = 1000001 (десятичное: 65) Запуск тестирования
+всех алгоритмов: Тестирование алгоритмов для системы счисления с
+основанием 10
+============================================================</li>
+</ol>
+<p>u = 123, v = 456 … Деление: 999999 / 888888 = 1 Остаток: 111111
+Проверка частного: 1 Проверка остатка: 111111</p>
+<h1 id="вывод">Вывод</h1>
+<p>В ходе выполнения данной лабораторной работы я приобрела практические
+навыки реализации алгоритмов арифметических операций с большими целыми
+числами</p>
